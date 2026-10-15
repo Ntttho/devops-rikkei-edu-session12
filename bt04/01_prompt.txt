@@ -1,0 +1,98 @@
+# BÀI TẬP 04 - CHUỖI PROMPT SINH TEST CASE VÀ DỮ LIỆU KIỂM THỬ
+# Dự án: Kiểm thử API Đăng ký tài khoản eKYC - ABC Bank
+
+================================================================================
+PROMPT 1: PHÂN TÍCH VÀ SINH TEST CASE
+================================================================================
+
+Bạn là một Senior QA Engineer chuyên về kiểm thử hệ thống ngân hàng.
+Dựa trên đặc tả API đăng ký tài khoản eKYC sau:
+
+[API Endpoint]
+POST /api/v1/registrations/register
+
+[Input Fields]
+- fullName: String, bắt buộc, tối đa 100 ký tự
+- phone: String, bắt buộc, 10 chữ số, bắt đầu bằng 03x/07x/08x/09x
+- email: String, bắt buộc, định dạng email hợp lệ
+- citizenId: String, bắt buộc, đúng 12 chữ số
+
+[Business Rules]
+- Mỗi CCCD chỉ mở 01 tài khoản (BR-01)
+- Mỗi SĐT chỉ liên kết 01 tài khoản (BR-02)
+- CCCD phải đúng 12 chữ số (BR-03)
+
+Hãy sinh danh sách Test Case đầy đủ dạng bảng Markdown với cột:
+| ID | Mô tả | Dữ liệu đầu vào | Kết quả mong đợi | Loại |
+
+Yêu cầu bao gồm:
+1. Positive Test Case (ít nhất 5): Dữ liệu hoàn toàn hợp lệ
+2. Negative Test Case (ít nhất 15): Để trống, sai định dạng, trùng lặp
+3. Boundary Test Case (ít nhất 8): Chuỗi quá dài/quá ngắn, giá trị biên
+
+================================================================================
+PROMPT 2: SINH DỮ LIỆU MOCK 50 KHÁCH HÀNG
+================================================================================
+
+Hãy sinh 50 dòng dữ liệu giả lập (Mock Data) khách hàng Việt Nam dưới dạng CSV
+với header:
+
+fullName,phone,email,citizenId,dateOfBirth,address,expectedStatus
+
+Yêu cầu:
+1. Họ tên: Tên người Việt Nam thực tế (có dấu), đa dạng nam/nữ
+2. Số điện thoại: Đầu số Việt Nam hợp lệ (032, 033, 034, 035, 036,
+   070, 076, 077, 078, 079, 081, 082, 083, 084, 085,
+   086, 096, 097, 098, 039, 056, 058, 092, 058, 099)
+3. Email: Dạng tên.ho@domain.com (gmail, yahoo, outlook, edu.vn...)
+4. CCCD: Chuỗi 12 chữ số ngẫu nhiên nhưng thực tế
+   (2 chữ số đầu là mã tỉnh: 01-96)
+5. Ngày sinh: Định dạng DD/MM/YYYY, tuổi từ 18-65
+6. Địa chỉ: Địa chỉ tỉnh/thành thực tế của Việt Nam
+7. expectedStatus: ACTIVE (dữ liệu hợp lệ) hoặc REJECTED (chèn vài dòng lỗi)
+
+Chỉ trả về nội dung CSV thuần túy, không có markdown code block.
+
+================================================================================
+PROMPT 3: SINH MÃ UNIT TEST JUNIT 5
+================================================================================
+
+Dựa vào mã nguồn RegistrationServiceImpl và RegistrationController từ Bài 03,
+hãy viết các class JUnit 5 Test (sử dụng Mockito) để kiểm thử luồng đăng ký:
+
+1. RegistrationServiceTest:
+   - test_register_success(): Test đăng ký thành công, trả về ACTIVE
+   - test_register_duplicate_citizenId(): Test ném BusinessException khi CCCD trùng
+   - test_register_duplicate_phone(): Test ném BusinessException khi SĐT trùng
+   - test_register_savesCorrectData(): Verify data được save đúng xuống repo
+   - test_register_accountNumberGenerated(): Verify số tài khoản được sinh ra
+
+2. RegistrationControllerTest (MockMvc):
+   - test_register_validRequest_returns201(): POST với dữ liệu đúng → 201 Created
+   - test_register_blankFullName_returns400(): fullName rỗng → 400 Bad Request
+   - test_register_invalidEmail_returns400(): Email sai định dạng → 400
+   - test_register_invalidPhone_returns400(): SĐT sai định dạng → 400
+   - test_register_invalidCitizenId_returns400(): CCCD không đủ 12 số → 400
+   - test_register_duplicateCitizenId_returns409(): CCCD trùng → 409 Conflict
+
+Yêu cầu:
+- Sử dụng @ExtendWith(MockitoExtension.class) cho Service test
+- Sử dụng @WebMvcTest cho Controller test
+- Có @DisplayName tiếng Việt mô tả từng test case
+- Dùng AssertJ cho assertions (assertThat, assertThatThrownBy)
+
+================================================================================
+PROMPT 4: SINH THÊM EDGE CASE TEST
+================================================================================
+
+Bổ sung các test case nâng cao cho RegistrationServiceImpl:
+
+1. test_register_citizenIdWith11Digits_shouldFail(): CCCD 11 chữ số → Validation fail
+2. test_register_citizenIdWith13Digits_shouldFail(): CCCD 13 chữ số → Validation fail
+3. test_register_phoneStartWith01_shouldFail(): SĐT đầu 01 (cũ) → Validation fail
+4. test_register_fullNameMaxLength_shouldPass(): Tên đúng 100 ký tự → Pass
+5. test_register_fullNameOver100Chars_shouldFail(): Tên 101 ký tự → Fail
+6. test_register_verifyStatus_isPending_thenActive(): Verify trạng thái thay đổi đúng
+7. test_register_accountNumber_has14Digits(): Verify số tài khoản đúng 14 chữ số
+
+Trình bày mã Java đầy đủ, có import statements và comment giải thích.

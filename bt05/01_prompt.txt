@@ -1,0 +1,123 @@
+# BÀI TẬP 05 - CHUỖI PROMPT REFACTOR VÀ CLEAN CODE
+# Dự án: Cải thiện chất lượng mã nguồn API eKYC - ABC Bank
+
+================================================================================
+PROMPT 1: PHÂN TÍCH CODE SMELL VÀ KỸ NỢ KỸ THUẬT
+================================================================================
+
+Bạn là một Lead Developer / Code Reviewer chuyên gia với kinh nghiệm sâu về
+Clean Code, SOLID principles, và Design Patterns trong hệ sinh thái Java Spring Boot.
+
+Tôi cần bạn review mã nguồn sau (RegistrationServiceImpl.java - phiên bản đầu tiên):
+
+[Dán toàn bộ nội dung RegistrationServiceImpl.java từ Bài 03]
+
+Hãy phân tích và chỉ ra:
+
+1. CODE SMELL: Liệt kê tất cả các "mùi code" tìm thấy, giải thích tại sao đây là vấn đề.
+   Ví dụ: Long Method, God Class, Magic Number, Duplicated Code...
+
+2. VI PHẠM SOLID: Chỉ ra các điểm vi phạm nguyên lý SOLID:
+   - S: Single Responsibility Principle (SRP)
+   - O: Open/Closed Principle (OCP)
+   - L: Liskov Substitution
+   - I: Interface Segregation
+   - D: Dependency Inversion Principle (DIP)
+
+3. KỸ NỢ KỸ THUẬT (Technical Debt):
+   - Thiếu test coverage
+   - Coupling cao
+   - Xử lý exception không nhất quán
+   - Thiếu logging cấu trúc
+   - Các cạm bẫy về hiệu năng
+
+4. BẢO MẬT: Các lỗ hổng bảo mật tiềm tàng (nếu có)
+
+Trả lời dạng bảng/danh sách có cấu trúc, ưu tiên theo mức độ nghiêm trọng (Critical/High/Medium/Low).
+
+================================================================================
+PROMPT 2: TÁCH LỚP VALIDATION
+================================================================================
+
+Dựa trên phân tích ở trên, hãy thực hiện Refactor đầu tiên:
+Tách logic validation ra khỏi RegistrationServiceImpl để tuân thủ SRP.
+
+Tạo class mới: RegistrationValidator
+
+Yêu cầu:
+1. @Component - Inject được vào Service
+2. Phương thức: void validateRegistration(RegistrationRequest request)
+3. Kiểm tra nghiệp vụ:
+   - Trùng CCCD (gọi repository.existsByCitizenId)
+   - Trùng SĐT (gọi repository.existsByPhone)
+   - Định dạng CCCD 12 chữ số (fallback validation)
+4. Ném ValidationException (tùy chỉnh) với field name và message rõ ràng
+5. Có JavaDoc và comment tiếng Việt
+
+Sau đó, sửa RegistrationServiceImpl để inject và sử dụng RegistrationValidator thay vì
+tự validate. Service giờ chỉ chịu trách nhiệm orchestration (điều phối luồng).
+
+================================================================================
+PROMPT 3: GLOBAL EXCEPTION HANDLER CHUẨN
+================================================================================
+
+Nâng cấp GlobalExceptionHandler.java để xử lý đầy đủ và nhất quán hơn:
+
+1. Bổ sung xử lý ValidationException (từ lớp Validator vừa tách)
+2. Đảm bảo tất cả response lỗi dùng chung ErrorResponse DTO với cấu trúc:
+   - timestamp: thời điểm lỗi (ISO 8601)
+   - status: HTTP status code (int)
+   - error: tên lỗi ngắn gọn (DUPLICATE_CITIZEN_ID, INVALID_FORMAT...)
+   - message: mô tả chi tiết cho người dùng (tiếng Việt)
+   - details: Map<String, String> cho validation errors (field -> message)
+   - path: endpoint bị lỗi
+   - traceId: UUID ngẫu nhiên để trace log (hỗ trợ debugging)
+
+3. Thêm xử lý: HttpMessageNotReadableException (JSON parse error)
+4. Thêm xử lý: MethodNotAllowedException (sai HTTP method)
+
+Trả về mã Java đầy đủ với annotation và JavaDoc.
+
+================================================================================
+PROMPT 4: NÂNG CẤP LOGGING
+================================================================================
+
+Bổ sung Structured Logging (logging có cấu trúc) vào hệ thống:
+
+1. Nâng cấp RegistrationServiceImpl:
+   - Log INFO khi bắt đầu và kết thúc mỗi request (kèm requestId)
+   - Log WARN khi phát hiện trùng lặp (kèm thông tin bị che giấu/masked)
+   - Log ERROR khi có lỗi hệ thống (kèm stack trace)
+   - Log DEBUG cho các bước chi tiết
+
+2. Tạo RequestLoggingFilter (@Component, implements Filter):
+   - Tự động log mọi HTTP request đến (method, path, IP, user-agent)
+   - Tự động log response (status code, thời gian xử lý)
+   - Sinh traceId cho mỗi request và đưa vào MDC (Mapped Diagnostic Context)
+
+3. Cấu hình application.properties cho logging ra file:
+   - logging.file.name=logs/ekyc-app.log
+   - logging.pattern.file với traceId từ MDC
+
+Trả lời với đầy đủ mã nguồn Java và cấu hình.
+
+================================================================================
+PROMPT 5: SINH BÁO CÁO SO SÁNH TRƯỚC/SAU REFACTOR
+================================================================================
+
+Dựa trên toàn bộ quá trình Refactor từ Prompt 1-4, hãy lập bảng báo cáo tóm tắt:
+
+BẢNG SO SÁNH: MÃ NGUỒN TRƯỚC VÀ SAU REFACTOR
+
+Với các chiều đánh giá:
+1. Cấu trúc lớp và Số lượng class
+2. Tuân thủ SOLID (từng nguyên lý)
+3. Code Smell (đã giải quyết bao nhiêu %)
+4. Exception Handling (trước: rải rác / sau: tập trung)
+5. Logging (trước: không có / sau: có cấu trúc)
+6. Khả năng test (Testability)
+7. Khả năng bảo trì (Maintainability)
+8. Bảo mật (Security)
+
+Trình bày dạng bảng Markdown, thêm đánh giá điểm 1-10 cho từng chiều.
+Kết luận bằng đoạn tóm tắt 5-7 câu về giá trị đạt được sau Refactor.

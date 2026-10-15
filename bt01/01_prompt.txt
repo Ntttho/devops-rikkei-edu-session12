@@ -1,0 +1,68 @@
+# BÀI TẬP 01 - CHUỖI PROMPT SỬ DỤNG VỚI ANTIGRAVITY
+# Dự án: Phân tích yêu cầu nghiệp vụ mở tài khoản ngân hàng trực tuyến (eKYC) - ABC Bank
+
+================================================================================
+PROMPT 1: THIẾT LẬP VAI TRÒ VÀ PHÂN TÍCH HỆ THỐNG
+================================================================================
+
+Bạn là một Senior Business Analyst với 10 năm kinh nghiệm trong lĩnh vực FinTech và Ngân hàng số tại Việt Nam. Bạn am hiểu sâu về quy định NHNN, chuẩn eKYC, và các quy trình số hóa ngân hàng.
+
+Tình huống: ABC Bank muốn số hóa hoàn toàn quy trình mở tài khoản. Khách hàng thực hiện qua app mobile với luồng:
+1. Tải app và đăng ký thông tin cơ bản
+2. Chụp ảnh 2 mặt CCCD
+3. Quét khuôn mặt (Liveness check)
+4. Hệ thống đối chiếu dữ liệu tự động
+5. Cấp số tài khoản tự động nếu hợp lệ
+
+Mục tiêu cốt lõi: "Zero manual operation" - giảm tối đa can thiệp của giao dịch viên.
+
+Hãy phân tích và trả về đầy đủ các thành phần sau (trình bày bằng tiếng Việt, có cấu trúc rõ ràng):
+
+1. ACTORS: Liệt kê tất cả tác nhân tham gia hệ thống, vai trò và mối quan hệ.
+2. BUSINESS FLOW: Mô tả luồng nghiệp vụ từng bước từ góc nhìn khách hàng và hệ thống.
+3. FUNCTIONAL REQUIREMENTS: Liệt kê yêu cầu chức năng, nhóm theo module.
+4. NON-FUNCTIONAL REQUIREMENTS: Bảo mật, hiệu năng, khả dụng, tuân thủ pháp lý...
+5. ASSUMPTIONS & BUSINESS RULES: Giả định nghiệp vụ và quy tắc ngân hàng áp dụng.
+
+================================================================================
+PROMPT 2: SINH USER STORY
+================================================================================
+
+Dựa trên phân tích nghiệp vụ eKYC của ABC Bank ở trên, hãy sinh danh sách User Story theo chuẩn:
+
+"As a [vai trò], I want to [hành động], So that [lợi ích]."
+
+Yêu cầu:
+- Tối thiểu 15 User Story, bao phủ toàn bộ luồng eKYC
+- Mỗi User Story kèm Acceptance Criteria (tiêu chí chấp nhận) dạng bullet
+- Ưu tiên theo MoSCoW (Must/Should/Could/Won't)
+- Ngôn ngữ: tiếng Việt
+
+================================================================================
+PROMPT 3: SINH USE CASE
+================================================================================
+
+Dựa trên phân tích nghiệp vụ eKYC ABC Bank, hãy sinh danh sách Use Case chi tiết.
+
+Mỗi Use Case gồm:
+- Mã UC (ví dụ: UC-01)
+- Tên Use Case
+- Actor chính
+- Mô tả ngắn
+- Precondition (Điều kiện tiên quyết)
+- Main Flow (Luồng chính, đánh số từng bước)
+- Alternative Flow (Luồng thay thế / ngoại lệ)
+- Postcondition (Điều kiện sau khi hoàn thành)
+
+Tối thiểu 10 Use Case. Trình bày bảng tóm tắt + chi tiết từng UC.
+
+================================================================================
+PROMPT 4: RÀ SOÁT VÀ BỔ SUNG
+================================================================================
+
+Hãy rà soát lại toàn bộ phân tích eKYC ABC Bank và:
+1. Bổ sung các rủi ro nghiệp vụ (Business Risk) và cách giảm thiểu
+2. Liệt kê các điểm cần xác nhận với Stakeholder (Open Questions)
+3. Đề xuất KPI đo lường thành công của dự án "Zero manual operation"
+
+Trả lời ngắn gọn, có cấu trúc, tiếng Việt.

@@ -1,0 +1,116 @@
+# BÀI TẬP 03 - CHUỖI PROMPT SINH MÃ NGUỒN SPRING BOOT
+# Dự án: API Đăng ký mở tài khoản - ABC Bank eKYC
+
+================================================================================
+PROMPT 1: THIẾT LẬP VAI TRÒ VÀ PHÂN TÍCH YÊU CẦU
+================================================================================
+
+Bạn là một Senior Backend Developer với 10 năm kinh nghiệm phát triển hệ thống
+ngân hàng bằng Java Spring Boot. Bạn thành thạo kiến trúc Microservice, chuẩn
+REST API, và các thực hành Clean Code.
+
+Tôi cần xây dựng API "Đăng ký mở tài khoản cơ bản" cho hệ thống eKYC ABC Bank
+theo đặc tả sau:
+
+[Input - Request Body]
+- fullName: Họ và tên khách hàng (String, bắt buộc, tối đa 100 ký tự)
+- phone: Số điện thoại Việt Nam (String, bắt buộc, đầu số 03x/07x/08x/09x, 10 chữ số)
+- email: Địa chỉ email (String, bắt buộc, định dạng hợp lệ)
+- citizenId: Số CCCD (String, bắt buộc, đúng 12 chữ số)
+
+[Output - Response Body]
+- accountId: UUID định danh hồ sơ đăng ký
+- accountNumber: Số tài khoản (nếu ACTIVE)
+- status: Trạng thái PENDING hoặc ACTIVE
+
+[Business Rules]
+- Mỗi CCCD chỉ mở được 01 tài khoản (BR-01)
+- Mỗi SĐT chỉ liên kết 01 tài khoản (BR-02)
+- CCCD phải đúng 12 chữ số (BR-03)
+- Khách hàng phải đủ 18 tuổi (trường dateOfBirth tính từ citizenId)
+
+Hãy phân tích và xác nhận bạn đã hiểu yêu cầu. Sau đó liệt kê các class/interface
+cần tạo theo chuẩn MVC Spring Boot trước khi sinh code.
+
+================================================================================
+PROMPT 2: SINH ENTITY VÀ DTO
+================================================================================
+
+Dựa trên đặc tả API đăng ký tài khoản eKYC ở trên, hãy sinh mã nguồn Java
+(Spring Boot) cho tầng Entity và DTO:
+
+1. Entity class: CustomerRegistration (ánh xạ bảng customer_registrations)
+   - Các trường: id (UUID), fullName, phone, email, citizenId, accountNumber,
+     status (enum: PENDING/ACTIVE/REJECTED), createdAt, updatedAt
+   - Annotation: @Entity, @Table, @Id, @GeneratedValue, @Column, @CreationTimestamp,
+     @UpdateTimestamp
+   - Enum RegistrationStatus với 3 giá trị
+
+2. DTO classes:
+   - RegistrationRequest (Input DTO): các trường fullName, phone, email, citizenId
+     với đầy đủ annotation validation (@NotBlank, @Email, @Pattern)
+   - RegistrationResponse (Output DTO): accountId, accountNumber, status, message
+
+Yêu cầu:
+- Có JavaDoc đầy đủ cho class và các trường quan trọng
+- Comment tiếng Việt giải thích các annotation và logic
+- Sử dụng Lombok (@Data, @Builder, @NoArgsConstructor, @AllArgsConstructor)
+
+================================================================================
+PROMPT 3: SINH REPOSITORY VÀ SERVICE
+================================================================================
+
+Tiếp tục sinh mã nguồn cho tầng Repository và Service:
+
+1. Repository interface: CustomerRegistrationRepository
+   - Extends JpaRepository<CustomerRegistration, UUID>
+   - Thêm custom query: existsByPhone, existsByCitizenId
+   - Optional<CustomerRegistration> findByCitizenId(String citizenId)
+
+2. Service interface: RegistrationService
+   - Phương thức: RegistrationResponse register(RegistrationRequest request)
+
+3. Service implementation: RegistrationServiceImpl
+   - Validate trùng lặp phone và citizenId (ném BusinessException nếu trùng)
+   - Tạo entity, lưu vào database
+   - Mô phỏng logic tạo số tài khoản (random 14 chữ số)
+   - Log các bước xử lý bằng SLF4J (log.info, log.error)
+   - Có JavaDoc và comment tiếng Việt tại các đoạn logic quan trọng
+
+================================================================================
+PROMPT 4: SINH CONTROLLER VÀ CẤU HÌNH
+================================================================================
+
+Sinh tiếp các thành phần còn lại:
+
+1. Controller: RegistrationController
+   - @RestController, @RequestMapping("/api/v1/registrations")
+   - POST /register nhận RegistrationRequest, trả về ResponseEntity<RegistrationResponse>
+   - Có @Valid để kích hoạt validation
+   - Thêm @Operation (Swagger) mô tả endpoint bằng tiếng Việt
+
+2. Exception classes:
+   - BusinessException (extends RuntimeException): cho lỗi nghiệp vụ
+   - ErrorResponse DTO: timestamp, status, error, message, path
+
+3. application.properties cơ bản:
+   - Cấu hình datasource H2 (in-memory cho dev/test)
+   - spring.jpa.hibernate.ddl-auto=create-drop
+   - Thông tin server port, app name
+
+================================================================================
+PROMPT 5: SINH ARCHITECTURE DIAGRAM (BONUS)
+================================================================================
+
+Hãy sinh sơ đồ kiến trúc hệ thống bằng Mermaid mô tả luồng đi của request
+Đăng ký tài khoản qua các tầng:
+
+Client (Postman/Mobile App)
+  -> API Gateway
+  -> RegistrationController (REST Layer)
+  -> RegistrationService (Business Logic Layer)
+  -> CustomerRegistrationRepository (Data Access Layer)
+  -> Database (H2 / PostgreSQL)
+
+Bao gồm cả luồng exception khi dữ liệu trùng lặp và luồng thành công.
+Mã Mermaid phải hợp lệ và có chú thích tiếng Việt.

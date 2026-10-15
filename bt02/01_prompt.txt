@@ -1,0 +1,61 @@
+# BÀI TẬP 02 - CHUỖI PROMPT TẠO TÀI LIỆU SRS
+# Dự án: Software Requirements Specification - Tính năng eKYC ABC Bank
+
+================================================================================
+PROMPT 1: TẠO KHUNG SRS THEO CHUẨN IEEE
+================================================================================
+
+Bạn là Senior Business Analyst chuyên viết tài liệu SRS theo chuẩn IEEE 830/29148.
+
+Dựa trên kết quả phân tích nghiệp vụ eKYC ABC Bank sau đây:
+[Paste toàn bộ nội dung từ Bài 01: Actors, Business Flow, FR, NFR, Business Rules]
+
+Hãy viết tài liệu SRS với cấu trúc:
+- Phần 1: Introduction (Purpose, Scope, Definitions)
+- Phần 2: Overall Description (Product Perspective, User Classes, Constraints)
+- Phần 3: Specific Functional Requirements (4 module: Đăng ký, OCR, Liveness, Kích hoạt)
+- Phần 4: Non-Functional Requirements (Security, Performance, Availability)
+
+Ngôn ngữ: tiếng Việt. Định dạng Markdown. Chi tiết, chuyên nghiệp.
+
+================================================================================
+PROMPT 2: BỔ SUNG YÊU CẦU CHỨC NĂNG CHI TIẾT
+================================================================================
+
+Mở rộng Phần 3 của SRS eKYC với format chi tiết cho mỗi yêu cầu chức năng:
+
+- ID yêu cầu
+- Tên chức năng
+- Mô tả
+- Input / Output
+- Business Rules liên quan
+- Tiêu chí chấp nhận (Acceptance Criteria)
+
+Tập trung 4 module:
+1. Đăng ký tài khoản (fullName, phone, email, citizenId)
+2. Upload & Đọc CCCD (OCR)
+3. Xác thực khuôn mặt (Liveness + Face Matching)
+4. Kích hoạt tài khoản tự động
+
+================================================================================
+PROMPT 3: SINH SƠ ĐỒ MERMAID USE CASE DIAGRAM
+================================================================================
+
+Dựa trên SRS eKYC ABC Bank, hãy sinh mã Mermaid để vẽ Use Case Diagram mô tả:
+- Actor: Khách hàng, eKYC Engine, Core Banking, Admin
+- Use Cases: Đăng ký, OCR CCCD, Liveness Check, Đối chiếu, Kích hoạt tài khoản
+- Mối quan hệ include/extend nếu có
+
+Yêu cầu: Mã Mermaid hợp lệ, có thể render trực tiếp trên GitHub hoặc Mermaid Live Editor.
+
+================================================================================
+PROMPT 4: RÀ SOÁT VÀ HOÀN THIỆN SRS
+================================================================================
+
+Rà soát toàn bộ SRS eKYC ABC Bank:
+1. Kiểm tra tính nhất quán giữa FR và NFR
+2. Bổ sung bảng Traceability Matrix (User Story → FR → Test Case placeholder)
+3. Thêm mục Lịch sử thay đổi tài liệu (Document History)
+4. Đảm bảo thuật ngữ được định nghĩa đầy đủ trong mục Definitions
+
+Trả về phiên bản SRS hoàn chỉnh, sẵn sàng bàn giao cho Dev và QA.
